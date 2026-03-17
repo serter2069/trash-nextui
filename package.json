@@ -13,7 +13,7 @@
     "better-sqlite3": "^12.8.0",
     "framer-motion": "^12.37.0",
     "jose": "^6.2.1",
-    "next": "16.1.7",
+    "next": "14.2.18",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
