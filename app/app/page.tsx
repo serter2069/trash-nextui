@@ -2,9 +2,18 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  Card,
+  CardBody,
+  CardHeader,
+  Button,
+  Textarea,
+  Divider,
+} from '@heroui/react';
 
 interface Thought {
   id: number;
@@ -69,79 +78,103 @@ export default function AppPage() {
 
   const totalPages = Math.ceil(total / 20);
 
+  const pluralThoughts = (n: number) => {
+    if (n === 1) return 'мысль';
+    if (n >= 2 && n <= 4) return 'мысли';
+    return 'мыслей';
+  };
+
   return (
-    <div className="min-h-screen p-4 max-w-2xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Мысли в урну</h1>
-        <Button variant="outline" size="sm" onClick={handleLogout}>
-          Выйти
-        </Button>
-      </div>
-
-      <Card>
-        <CardContent className="pt-6">
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <Textarea
-              placeholder="Напишите негативную мысль..."
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              rows={4}
-              className="resize-none"
-            />
-            <Button type="submit" className="w-full" disabled={submitting || !text.trim()}>
-              {submitting ? 'Выбрасываем...' : 'Выбросить'}
+    <div className="min-h-screen bg-default-50">
+      <Navbar maxWidth="sm" className="bg-white shadow-sm">
+        <NavbarBrand>
+          <p className="font-bold text-inherit text-lg">Мысли в урну</p>
+        </NavbarBrand>
+        <NavbarContent justify="end">
+          <NavbarItem>
+            <Button variant="flat" size="sm" onPress={handleLogout}>
+              Выйти
             </Button>
-          </form>
-        </CardContent>
-      </Card>
+          </NavbarItem>
+        </NavbarContent>
+      </Navbar>
 
-      <div className="space-y-3">
-        <h2 className="text-lg font-semibold">
-          История ({total} {total === 1 ? 'мысль' : total >= 2 && total <= 4 ? 'мысли' : 'мыслей'})
-        </h2>
+      <div className="max-w-lg mx-auto p-4 space-y-4">
+        <Card shadow="sm">
+          <CardBody>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+              <Textarea
+                placeholder="Напишите негативную мысль..."
+                value={text}
+                onValueChange={setText}
+                minRows={3}
+                maxRows={8}
+                variant="bordered"
+              />
+              <Button
+                type="submit"
+                color="primary"
+                isLoading={submitting}
+                isDisabled={!text.trim()}
+                className="w-full"
+              >
+                {submitting ? 'Выбрасываем...' : 'Выбросить'}
+              </Button>
+            </form>
+          </CardBody>
+        </Card>
 
-        {loading ? (
-          <p className="text-muted-foreground text-sm">Загрузка...</p>
-        ) : thoughts.length === 0 ? (
-          <p className="text-muted-foreground text-sm">Пока пусто. Выбросьте первую мысль.</p>
-        ) : (
-          thoughts.map((t) => (
-            <Card key={t.id}>
-              <CardHeader className="pb-2 pt-4">
-                <CardTitle className="text-sm font-normal text-muted-foreground">
-                  {new Date(t.created_at).toLocaleString('ru-RU')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pb-4">
-                <p className="text-sm whitespace-pre-wrap">{t.text}</p>
-              </CardContent>
-            </Card>
-          ))
-        )}
+        <div>
+          <h2 className="text-base font-semibold mb-3 text-default-700">
+            История ({total} {pluralThoughts(total)})
+          </h2>
 
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between pt-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-            >
-              Назад
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              {page} / {totalPages}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-            >
-              Вперёд
-            </Button>
-          </div>
-        )}
+          {loading ? (
+            <p className="text-default-400 text-sm">Загрузка...</p>
+          ) : thoughts.length === 0 ? (
+            <p className="text-default-400 text-sm">Пока пусто. Выбросьте первую мысль.</p>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {thoughts.map((t) => (
+                <Card key={t.id} shadow="sm">
+                  <CardHeader className="pb-1 pt-3 px-4">
+                    <span className="text-xs text-default-400">
+                      {new Date(t.created_at).toLocaleString('ru-RU')}
+                    </span>
+                  </CardHeader>
+                  <Divider />
+                  <CardBody className="py-3 px-4">
+                    <p className="text-sm whitespace-pre-wrap">{t.text}</p>
+                  </CardBody>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4">
+              <Button
+                variant="flat"
+                size="sm"
+                onPress={() => setPage((p) => Math.max(1, p - 1))}
+                isDisabled={page === 1}
+              >
+                Назад
+              </Button>
+              <span className="text-sm text-default-400">
+                {page} / {totalPages}
+              </span>
+              <Button
+                variant="flat"
+                size="sm"
+                onPress={() => setPage((p) => Math.min(totalPages, p + 1))}
+                isDisabled={page === totalPages}
+              >
+                Вперёд
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

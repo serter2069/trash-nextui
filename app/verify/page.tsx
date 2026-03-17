@@ -2,10 +2,7 @@
 
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardHeader, CardBody, Input, Button } from '@heroui/react';
 
 function VerifyForm() {
   const router = useRouter();
@@ -37,34 +34,39 @@ function VerifyForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Введите код</CardTitle>
-          <CardDescription>
-            Код отправлен на {email}. (Подсказка: всегда <strong>1234</strong>)
-          </CardDescription>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-default-50">
+      <Card className="w-full max-w-sm" shadow="md">
+        <CardHeader className="flex flex-col items-start gap-1 px-6 pt-6 pb-2">
+          <h1 className="text-2xl font-bold">Введите код</h1>
+          <p className="text-default-500 text-sm">
+            Код отправлен на {email}. Подсказка: всегда <strong>1234</strong>
+          </p>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="code">4-значный код</Label>
-              <Input
-                id="code"
-                type="text"
-                placeholder="1234"
-                maxLength={4}
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                required
-              />
-            </div>
-            {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" className="w-full" disabled={loading}>
+        <CardBody className="px-6 pb-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <Input
+              id="code-input"
+              type="text"
+              label="4-значный код"
+              placeholder="1234"
+              maxLength={4}
+              value={code}
+              onValueChange={setCode}
+              isRequired
+              variant="bordered"
+            />
+            {error && <p className="text-danger text-sm">{error}</p>}
+            <Button
+              id="verify-btn"
+              type="submit"
+              color="primary"
+              isLoading={loading}
+              className="w-full"
+            >
               {loading ? 'Проверяем...' : 'Войти'}
             </Button>
           </form>
-        </CardContent>
+        </CardBody>
       </Card>
     </div>
   );

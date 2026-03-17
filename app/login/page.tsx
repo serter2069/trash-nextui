@@ -2,10 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardHeader, CardBody, Input, Button } from '@heroui/react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,31 +31,36 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Мысли в урну</CardTitle>
-          <CardDescription>Введите email для входа</CardDescription>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-default-50">
+      <Card className="w-full max-w-sm" shadow="md">
+        <CardHeader className="flex flex-col items-start gap-1 px-6 pt-6 pb-2">
+          <h1 className="text-2xl font-bold">Мысли в урну</h1>
+          <p className="text-default-500 text-sm">Введите email для входа</p>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" className="w-full" disabled={loading}>
+        <CardBody className="px-6 pb-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <Input
+              id="email-input"
+              type="email"
+              label="Email"
+              placeholder="you@example.com"
+              value={email}
+              onValueChange={setEmail}
+              isRequired
+              variant="bordered"
+            />
+            {error && <p className="text-danger text-sm">{error}</p>}
+            <Button
+              id="send-btn"
+              type="submit"
+              color="primary"
+              isLoading={loading}
+              className="w-full"
+            >
               {loading ? 'Отправляем...' : 'Получить код'}
             </Button>
           </form>
-        </CardContent>
+        </CardBody>
       </Card>
     </div>
   );
